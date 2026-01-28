@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Locations - StockedUp</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="manage-locations-page"> <!-- page-specific class  -->
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+             <div class="user-info">
+                <h2>Hello,<br>{{ session.username if session.username else 'User' }}</h2>
+            </div>
+             <!-- Update active state -->
+             <a href="{{ url_for('view_inventory') }}"><button>View Inventory</button></a>
+             <a href="{{ url_for('add_item_form') }}"><button>Add Item</button></a>
+             <a href="{{ url_for('view_inventory') }}"><button title="Select 'Edit' in table">Edit Item</button></a>
+             <a href="{{ url_for('search_items_form') }}"><button>Search Item</button></a>
+             <a href="{{ url_for('manage_categories') }}"><button>Manage Categories</button></a>
+             <!-- This page is active -->
+             <a href="{{ url_for('manage_locations') }}"><button class="active">Manage Locations</button></a>
+             <a href="{{ url_for('logout_action') }}"><button class="signout">Sign Out</button></a>
+        </aside>
+
+         <!-- Main Content -->
+        <main class="main-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}<div class="flashes">{% for category, message in messages %}
+                  <div style="padding: 10px; margin-bottom: 10px; border: 1px solid; border-radius: 4px; color: #000; background-color: {% if category == 'danger' %}#f8d7da{% elif category == 'success' %}#d4edda{% else %}#cfe2ff{% endif %}; border-color: {% if category == 'danger' %}#f5c6cb{% elif category == 'success' %}#c3e6cb{% else %}#b6d4fe{% endif %};">{{ message }}</div>
+              {% endfor %}</div>{% endif %}
+            {% endwith %}
+
+            <header class="header"><h1>Manage Locations</h1></header>
+
+            <div class="content-box" style="margin-bottom: 30px;">
+                <h2>Add New Location</h2>
+                <!-- Form POSTs to add_location route -->
+                <form method="POST" action="{{ url_for('add_location') }}">
+                    <label for="location_name">Location Name:</label>
+                    <input type="text" id="location_name" name="location_name" required style="margin-left: 5px; margin-right: 10px;">
+                    <button type="submit" class="form-button">Add Location</button>
+                </form>
+             </div>
+
+             <div class="content-box">
+                <h2>Existing Locations</h2>
+                 {% if locations %}
+                    <table style="width: 100%; border-collapse: collapse;">
+                       <thead><tr><th>Name</th><th style="width: 100px;">Actions</th></tr></thead>
+                       <tbody>
+                       {% for location in locations %}
+                           <tr>
+                               <td style="border: 1px solid #ddd; padding: 8px;">{{ location.LocationName }}</td>
+                               <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+                                   <!-- Delete Form -->
+                                   <form method="POST" action="{{ url_for('delete_location', location_id=location.LocationID) }}" style="display:inline;" onsubmit="return confirm('Deleting location \'{{ location.LocationName | escape }}\' will set items in this location to unassigned. Proceed?');">
+                                       <button type="submit" style="background:none; font-size: 1rem; border:none; color:red; text-decoration:underline; cursor:pointer;">Delete</button>
+                                   </form>
+                               </td>
+                           </tr>
+                       {% endfor %}
+                       </tbody>
+                   </table>
+                {% else %}
+                    <p>No locations found. Add one using the form above.</p>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</body>
+</html>

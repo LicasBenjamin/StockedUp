@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - StockedUp</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+
+<body class="login-page">
+
+    <!-- Flash Message Display Area -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flashes" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index: 100; width: 80%; max-width: 500px;">
+        {% for category, message in messages %}
+          <!-- Basic alert styling -->
+          <div style="padding: 10px; margin-bottom: 10px; border: 1px solid; border-radius: 4px; color: #000; background-color: {% if category == 'danger' %}#f8d7da{% elif category == 'success' %}#d4edda{% else %}#cfe2ff{% endif %}; border-color: {% if category == 'danger' %}#f5c6cb{% elif category == 'success' %}#c3e6cb{% else %}#b6d4fe{% endif %}; text-align: center;">
+              {{ message }}
+          </div>
+        {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    <!-- End Flash Messages -->
+
+    <div class="login-box">
+        <h2>Log In</h2>
+        <!-- Form submits via POST to the 'login_action' route -->
+        <form method="POST" action="{{ url_for('login_action') }}">
+             <!-- 'name' attributes for Flask's request.form -->
+            <input type="text" placeholder="Username" id="username" name="username" required>
+            <input type="password" placeholder="Password" id="password" name="password" required>
+            <button type="submit">Log In</button>
+        </form>
+    </div>
+    
+</body>
+</html>

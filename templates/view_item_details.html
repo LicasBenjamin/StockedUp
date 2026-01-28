@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Details - StockedUp</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .details-label { font-weight: bold; min-width: 120px; display: inline-block; }
+        .details-value { margin-left: 10px; }
+        .details-item { margin-bottom: 10px; }
+        .notes-box { margin-left: 10px; white-space: pre-wrap; border: 1px solid #eee; padding: 5px; margin-top: 5px; background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+     <div class="container">
+         <aside class="sidebar">
+             <div class="user-info">
+                <h2>Hello,<br />{{ session.username if session.username else 'User' }}</h2>
+            </div>
+             <!-- Maybe Inventory should be active here -->
+            <a href="{{ url_for('view_inventory') }}"><button class="active">View Inventory</button></a>
+            <a href="{{ url_for('add_item_form') }}"><button>Add Item</button></a>
+            <a href="{{ url_for('view_inventory') }}"><button title="Select 'Edit' or 'View' in table">Edit Item</button></a>
+            <a href="{{ url_for('search_items_form') }}"><button>Search Item</button></a>
+             <!-- *** ADDED Manage Links *** -->
+            <a href="{{ url_for('manage_categories') }}"><button>Manage Categories</button></a>
+            <a href="{{ url_for('manage_locations') }}"><button>Manage Locations</button></a>
+            <!-- ************************** -->
+            <a href="{{ url_for('logout_action') }}"><button class="signout">Sign Out</button></a>
+        </aside>
+
+        <main class="main-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}<div class="flashes">{% for category, message in messages %}
+                 <div style="padding: 10px; margin-bottom: 10px; border: 1px solid; border-radius: 4px;">{{ message }}</div>
+              {% endfor %}</div>{% endif %}
+            {% endwith %}
+
+            <header class="header"> <h1>Item Details</h1> </header>
+            <div class="content-box">
+                {% if item %}
+                    <div class="details-item"><span class="details-label">Item Name:</span><span class="details-value">{{ item.ItemName }}</span></div>
+                    <div class="details-item"><span class="details-label">Category:</span><span class="details-value">{{ item.CategoryName if item.CategoryName else 'N/A' }}</span></div>
+                    <div class="details-item"><span class="details-label">Location:</span><span class="details-value">{{ item.LocationName if item.LocationName else 'N/A' }}</span></div>
+                    <div class="details-item"><span class="details-label">Quantity:</span><span class="details-value">{{ item.Quantity }}</span></div>
+                    <div class="details-item"><span class="details-label">Purchase Date:</span><span class="details-value">{{ item.PurchaseDate if item.PurchaseDate else 'N/A' }}</span></div>
+                    <div class="details-item"><span class="details-label">Expiration Date:</span><span class="details-value">{{ item.ExpirationDate if item.ExpirationDate else 'N/A' }}</span></div>
+                    <div class="details-item"><span class="details-label">Added By:</span><span class="details-value">{{ item.Username if item.Username else 'Unknown' }} (ID: {{item.UserID}})</span></div>
+                    <div class="details-item">
+                        <span class="details-label">Notes:</span>
+                        <div class="notes-box">{{ item.Notes if item.Notes else '(No notes entered)' }}</div>
+                    </div>
+                    <hr style="margin-top:20px; margin-bottom:15px;">
+                    <a href="{{ url_for('view_inventory') }}" class="form-button">Back to Inventory</a>
+                    <a href="{{ url_for('edit_item_form', item_id=item.ItemID) }}" class="form-button" style="margin-left: 10px;">Edit This Item</a>
+                {% else %}
+                    <p>Item details could not be loaded.</p>
+                    <a href="{{ url_for('view_inventory') }}" class="form-button">Back to Inventory</a>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</body>
+</html>

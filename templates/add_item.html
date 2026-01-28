@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Item - StockedUp</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body class="add-item-page">
+    <div class="container">
+        <aside class="sidebar">
+            <div class="user-info">
+                <h2>Hello,<br />{{ session.username if session.username else 'User' }}</h2>
+            </div>
+            <a href="{{ url_for('view_inventory') }}"><button>View Inventory</button></a>
+            <!--  active -->
+            <a href="{{ url_for('add_item_form') }}"><button class="active">Add Item</button></a>
+            <a href="{{ url_for('view_inventory') }}"><button title="Select 'Edit' in table">Edit Item</button></a>
+            <a href="{{ url_for('search_items_form') }}"><button>Search Item</button></a>
+            <!-- *** Manage Links *** -->
+            <a href="{{ url_for('manage_categories') }}"><button>Manage Categories</button></a>
+            <a href="{{ url_for('manage_locations') }}"><button>Manage Locations</button></a>
+            <!-- ************************** -->
+            <a href="{{ url_for('logout_action') }}"><button class="signout">Sign Out</button></a>
+        </aside>
+
+        <main class="main-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}<div class="flashes">{% for category, message in messages %}
+                  <div style="padding: 10px;
+                  margin-bottom: 10px;
+                  border: 1px solid;
+                  border-radius: 4px; color: #000;
+                  background-color: {% if category == 'danger' %}#f8d7da{% elif category == 'success' %}#d4edda{% else %}#cfe2ff{% endif %}; 
+                  border-color: {% if category == 'danger' %}#f5c6cb{% elif category == 'success' %}#c3e6cb{% else %}#b6d4fe{% endif %};"> {{ message }} </div>
+              {% endfor %}</div>{% endif %}
+            {% endwith %}
+
+            <header class="header"> <h1>Add New Item</h1> </header>
+            <div class="content-box">
+                <form method="POST" action="{{ url_for('add_item_action') }}">
+                    <label for="item_name">Item Name:</label><br />
+                    <input type="text" id="item_name" name="item_name" value="{{ submitted.item_name if submitted else '' }}" required><br /><br />
+                    <label for="category_id">Category:</label><br />
+                    <select id="category_id" name="category_id" required>
+                        <option value="">--Select Category--</option>
+                        {% for category in categories %}
+                          <option value="{{ category.CategoryID }}" {% if submitted and submitted.category_id == category.CategoryID|string %}selected{% endif %}>{{ category.CategoryName }}</option>
+                        {% endfor %}
+                    </select> <br/><br/>
+                    <label for="location_id">Location:</label><br />
+                    <select id="location_id" name="location_id" required>
+                        <option value="">--Select Location--</option>
+                         {% for location in locations %}
+                          <option value="{{ location.LocationID }}" {% if submitted and submitted.location_id == location.LocationID|string %}selected{% endif %}>{{ location.LocationName }}</option>
+                        {% endfor %}
+                    </select> <br/><br/>
+                    <label for="quantity">Quantity:</label><br />
+                    <input type="number" id="quantity" name="quantity" value="{{ submitted.quantity if submitted else '1' }}" min="0" required><br /><br />
+                    <label for="purchase_date">Purchase Date (Optional):</label><br />
+                    <input type="date" id="purchase_date" name="purchase_date" value="{{ submitted.purchase_date if submitted else '' }}"><br /><br />
+                    <label for="expiration_date">Expiration Date (Optional):</label><br />
+                    <input type="date" id="expiration_date" name="expiration_date" value="{{ submitted.expiration_date if submitted else '' }}"><br /><br />
+                    <label for="notes">Notes (Optional):</label><br />
+                    <textarea id="notes" name="notes">{{ submitted.notes if submitted else '' }}</textarea><br /><br />
+                    <button class="form-button" type="submit">Submit New Item</button>
+                    <a href="{{ url_for('view_inventory') }}" style="margin-left: 10px;">Cancel</a>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

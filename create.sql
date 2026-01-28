@@ -1,0 +1,28 @@
+CREATE TABLE Users (
+    UserID INT PRIMARY KEY,
+    Username VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Category (
+    CategoryID INT PRIMARY KEY,
+    CategoryName VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Location (
+    LocationID INT PRIMARY KEY,
+    LocationName VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Items (
+    ItemID INT PRIMARY KEY,
+    ItemName VARCHAR(100) NOT NULL,
+    Quantity INT NOT NULL DEFAULT 1,
+    PurchaseDate DATE DEFAULT NULL,
+    ExpirationDate DATE DEFAULT NULL,
+    CategoryID INT,
+    LocationID INT,
+    UserID INT NOT NULL,
+    FOREIGN KEY (CategoryID) REFERENCES Category(CategoryID) ON DELETE SET NULL,
+    FOREIGN KEY (LocationID) REFERENCES Location(LocationID) ON DELETE SET NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE NO ACTION
+);
